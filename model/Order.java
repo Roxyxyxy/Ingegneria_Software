@@ -1,6 +1,12 @@
+package model;
+
 import java.util.ArrayList;
 import java.util.List;
+import strategy.ShippingCostStrategy;
 
+/**
+ * Ordine che contiene prodotti (pattern Composite + Strategy).
+ */
 public class Order extends OrderComponent {
     private List<OrderComponent> items = new ArrayList<>();
     private ShippingCostStrategy shippingStrategy;
@@ -13,6 +19,7 @@ public class Order extends OrderComponent {
         items.add(item);
     }
 
+    @Override
     public double getPrice() {
         double subtotal = 0;
         for (OrderComponent item : items) {
@@ -21,6 +28,7 @@ public class Order extends OrderComponent {
         return subtotal + shippingStrategy.calculateShipping(subtotal);
     }
 
+    @Override
     public String getDescription() {
         return "Order with " + items.size() + " items";
     }
