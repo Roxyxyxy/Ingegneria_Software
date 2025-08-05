@@ -9,4 +9,11 @@ public abstract class ProductDecorator extends OrderComponent {
     public ProductDecorator(OrderComponent component) {
         this.component = component;
     }
+
+    /**
+     * Metodo pubblico per ottenere il componente decorato.
+     */
+    public OrderComponent getComponent() {
+        return component;
+    }
 }

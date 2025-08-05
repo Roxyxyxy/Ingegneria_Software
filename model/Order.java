@@ -32,4 +32,11 @@ public class Order extends OrderComponent {
     public String getDescription() {
         return "Order with " + items.size() + " items";
     }
+
+    /**
+     * Metodo pubblico per ottenere la lista degli items.
+     */
+    public List<OrderComponent> getItems() {
+        return items;
+    }
 }

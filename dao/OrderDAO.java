@@ -56,15 +56,15 @@ public class OrderDAO {
     }
 
     /**
-     * Analizza un componente per estrarre informazioni sui decoratori.
+     * Analizza un componente per estrarre le informazioni sui decoratori.
      */
     private String analyzeComponent(OrderComponent component) {
         StringBuilder info = new StringBuilder();
 
         String baseName = extractBaseName(component);
         double basePrice = extractBasePrice(component);
-        boolean hasGiftWrap = hasDecorator(component, GiftWrapDecorator.class);
-        boolean hasInsurance = hasDecorator(component, InsuranceDecorator.class);
+        boolean hasGiftWrap = hasDecorator(component, "GiftWrap");
+        boolean hasInsurance = hasDecorator(component, "Insurance");
 
         info.append(baseName).append(",")
                 .append(basePrice).append(",")
@@ -81,7 +81,8 @@ public class OrderDAO {
         if (component instanceof Product) {
             return component.getDescription();
         } else if (component instanceof ProductDecorator) {
-            return extractBaseName(getDecoratedComponent((ProductDecorator) component));
+            ProductDecorator decorator = (ProductDecorator) component;
+            return extractBaseName(decorator.getComponent());
         }
         return "Unknown";
     }
@@ -93,9 +94,11 @@ public class OrderDAO {
         if (component instanceof Product) {
             return component.getPrice();
         } else if (component instanceof GiftWrapDecorator) {
-            return extractBasePrice(getDecoratedComponent((ProductDecorator) component));
+            GiftWrapDecorator decorator = (GiftWrapDecorator) component;
+            return extractBasePrice(decorator.getComponent());
         } else if (component instanceof InsuranceDecorator) {
-            return extractBasePrice(getDecoratedComponent((ProductDecorator) component));
+            InsuranceDecorator decorator = (InsuranceDecorator) component;
+            return extractBasePrice(decorator.getComponent());
         }
         return 0.0;
     }
@@ -103,40 +106,23 @@ public class OrderDAO {
     /**
      * Verifica se un componente ha un decoratore specifico.
      */
-    private boolean hasDecorator(OrderComponent component, Class<?> decoratorClass) {
-        if (decoratorClass.isInstance(component)) {
+    private boolean hasDecorator(OrderComponent component, String decoratorType) {
+        if (decoratorType.equals("GiftWrap") && component instanceof GiftWrapDecorator) {
+            return true;
+        } else if (decoratorType.equals("Insurance") && component instanceof InsuranceDecorator) {
             return true;
         } else if (component instanceof ProductDecorator) {
-            return hasDecorator(getDecoratedComponent((ProductDecorator) component), decoratorClass);
+            ProductDecorator decorator = (ProductDecorator) component;
+            return hasDecorator(decorator.getComponent(), decoratorType);
         }
         return false;
     }
 
     /**
-     * Ottiene il componente decorato usando reflection.
+     * Ottiene gli items di un ordine in modo diretto.
      */
-    private OrderComponent getDecoratedComponent(ProductDecorator decorator) {
-        try {
-            java.lang.reflect.Field field = ProductDecorator.class.getDeclaredField("component");
-            field.setAccessible(true);
-            return (OrderComponent) field.get(decorator);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Ottiene gli items di un ordine usando reflection.
-     */
-    @SuppressWarnings("unchecked")
     private List<OrderComponent> getOrderItems(Order order) {
-        try {
-            java.lang.reflect.Field field = Order.class.getDeclaredField("items");
-            field.setAccessible(true);
-            return (List<OrderComponent>) field.get(order);
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
+        return order.getItems();
     }
 
     /**
