@@ -1,0 +1,1 @@
+2025-08-05 18:53:40|48.5|Order with 2 items|Order|T-Shirt,20.0,false,false;Mug,15.0,true,true
