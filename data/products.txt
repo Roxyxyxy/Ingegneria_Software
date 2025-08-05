@@ -1,2 +1,4 @@
 T-Shirt,20.0
 Mug,15.0
+Product1,20.0
+Product2,15.0

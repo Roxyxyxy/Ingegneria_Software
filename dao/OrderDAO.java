@@ -217,7 +217,7 @@ public class OrderDAO {
 
         @Override
         public String toString() {
-            return String.format("[%s] %s - €%.2f (%s)",
+            return String.format("[%s] %s - $%.2f (%s)",
                     timestamp, description, totalPrice, strategy);
         }
     }

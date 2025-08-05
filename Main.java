@@ -24,7 +24,7 @@ public class Main {
         // Carica prodotti dal database
         System.out.println("\nProdotti nel database:");
         for (Product p : productDAO.loadAllProducts()) {
-            System.out.println("- " + p.getDescription() + ": €" + p.getPrice());
+            System.out.println("- " + p.getDescription() + ": $" + p.getPrice());
         }
 
         // Prodotto decorato
