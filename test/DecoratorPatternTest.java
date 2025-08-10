@@ -1,5 +1,4 @@
 // Test del pattern Decorator - GiftWrap e Insurance
-package test;
 
 import model.*;
 

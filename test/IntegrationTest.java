@@ -1,6 +1,5 @@
 
 // Test di integrazione - tutti i pattern insieme
-package test;
 
 import model.*;
 import strategy.*;

@@ -1,5 +1,4 @@
 // Test del pattern Strategy - StandardShipping e FreeShippingOver50
-package test;
 
 import strategy.*;
 import model.*;

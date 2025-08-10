@@ -1,2 +1,0 @@
-2025-08-10 15:05:32|1290.5|Order with 2 items|Order|Gaming Laptop,1200.0,true,true;Gaming Mouse,80.0,false,true
-2025-08-10 15:05:32|46.5|Order with 2 items|Order|Product1,20.0,false,false;Product2,15.0,true,true

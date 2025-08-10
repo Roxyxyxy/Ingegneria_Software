@@ -3,15 +3,12 @@ package dao;
 import model.*;
 import java.io.*;
 import java.util.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * DAO per gestire gli ordini su file.
  */
 public class OrderDAO {
     private static final String FILE_PATH = "data/orders.txt";
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public OrderDAO() {
         createDataDirectory();
@@ -28,94 +25,72 @@ public class OrderDAO {
      * Salva un ordine nel database.
      */
     public void saveOrder(Order order) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH, true))) {
-            String timestamp = LocalDateTime.now().format(FORMATTER);
+        // Controlla se l'ordine è duplicato
+        if (isDuplicateOrder(order)) {
+            System.out.println("Ordine già esistente, non salvato.");
+            return;
+        }
+
+        try {
+            FileWriter writer = new FileWriter(FILE_PATH, true);
+            PrintWriter printWriter = new PrintWriter(writer);
+
+            // Usa timestamp semplice
+            String timestamp = "2025-08-10 " + System.currentTimeMillis() % 86400000 / 1000;
             String strategy = order.getClass().getSimpleName();
 
-            // Formato: timestamp|prezzo|descrizione|strategia|dettagli_prodotti
-            StringBuilder line = new StringBuilder();
-            line.append(timestamp).append("|")
-                    .append(order.getPrice()).append("|")
-                    .append(order.getDescription()).append("|")
-                    .append(strategy).append("|");
+            // Crea la riga da salvare
+            String line = timestamp + "|" + order.getPrice() + "|" +
+                    order.getDescription() + "|" + strategy + "|";
 
             // Aggiungi dettagli sui prodotti
             List<OrderComponent> items = getOrderItems(order);
             for (int i = 0; i < items.size(); i++) {
                 OrderComponent item = items.get(i);
-                line.append(analyzeComponent(item));
+                line = line + analyzeComponent(item);
                 if (i < items.size() - 1) {
-                    line.append(";");
+                    line = line + ";";
                 }
             }
 
-            writer.println(line.toString());
+            printWriter.println(line);
+            printWriter.close();
+            writer.close();
         } catch (IOException e) {
             System.err.println("Errore nel salvare l'ordine: " + e.getMessage());
         }
     }
 
     /**
+     * Verifica se un ordine è duplicato confrontando prezzo e descrizione.
+     */
+    private boolean isDuplicateOrder(Order order) {
+        List<OrderSummary> existingOrders = loadAllOrders();
+
+        // Confronta prezzo e descrizione con ciclo semplice
+        for (int i = 0; i < existingOrders.size(); i++) {
+            OrderSummary existing = existingOrders.get(i);
+            if (existing.totalPrice == order.getPrice() &&
+                    existing.description.equals(order.getDescription())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Analizza un componente per estrarre le informazioni sui decoratori.
      */
     private String analyzeComponent(OrderComponent component) {
-        StringBuilder info = new StringBuilder();
+        // Usa nome e prezzo totale del componente
+        String name = component.getDescription();
+        double price = component.getPrice();
 
-        String baseName = extractBaseName(component);
-        double basePrice = extractBasePrice(component);
-        boolean hasGiftWrap = hasDecorator(component, "GiftWrap");
-        boolean hasInsurance = hasDecorator(component, "Insurance");
+        // Rileva decoratori dal nome della descrizione
+        boolean hasGiftWrap = name.contains("Gift Wrap");
+        boolean hasInsurance = name.contains("Insurance");
 
-        info.append(baseName).append(",")
-                .append(basePrice).append(",")
-                .append(hasGiftWrap).append(",")
-                .append(hasInsurance);
-
-        return info.toString();
-    }
-
-    /**
-     * Estrae il nome del prodotto base da una catena di decoratori.
-     */
-    private String extractBaseName(OrderComponent component) {
-        if (component instanceof Product) {
-            return component.getDescription();
-        } else if (component instanceof ProductDecorator) {
-            ProductDecorator decorator = (ProductDecorator) component;
-            return extractBaseName(decorator.getComponent());
-        }
-        return "Unknown";
-    }
-
-    /**
-     * Estrae il prezzo base del prodotto.
-     */
-    private double extractBasePrice(OrderComponent component) {
-        if (component instanceof Product) {
-            return component.getPrice();
-        } else if (component instanceof GiftWrapDecorator) {
-            GiftWrapDecorator decorator = (GiftWrapDecorator) component;
-            return extractBasePrice(decorator.getComponent());
-        } else if (component instanceof InsuranceDecorator) {
-            InsuranceDecorator decorator = (InsuranceDecorator) component;
-            return extractBasePrice(decorator.getComponent());
-        }
-        return 0.0;
-    }
-
-    /**
-     * Verifica se un componente ha un decoratore specifico.
-     */
-    private boolean hasDecorator(OrderComponent component, String decoratorType) {
-        if (decoratorType.equals("GiftWrap") && component instanceof GiftWrapDecorator) {
-            return true;
-        } else if (decoratorType.equals("Insurance") && component instanceof InsuranceDecorator) {
-            return true;
-        } else if (component instanceof ProductDecorator) {
-            ProductDecorator decorator = (ProductDecorator) component;
-            return hasDecorator(decorator.getComponent(), decoratorType);
-        }
-        return false;
+        return name + "," + price + "," + hasGiftWrap + "," + hasInsurance;
     }
 
     /**
@@ -129,14 +104,16 @@ public class OrderDAO {
      * Carica tutti gli ordini dal database.
      */
     public List<OrderSummary> loadAllOrders() {
-        List<OrderSummary> orders = new ArrayList<>();
+        List<OrderSummary> orders = new ArrayList<OrderSummary>();
         File file = new File(FILE_PATH);
 
         if (!file.exists()) {
             return orders;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+        try {
+            FileReader fileReader = new FileReader(FILE_PATH);
+            BufferedReader reader = new BufferedReader(fileReader);
             String line;
             while ((line = reader.readLine()) != null) {
                 try {
@@ -148,6 +125,8 @@ public class OrderDAO {
                     System.err.println("Errore nel parsare la riga: " + line);
                 }
             }
+            reader.close();
+            fileReader.close();
         } catch (IOException e) {
             System.err.println("Errore nel caricare gli ordini: " + e.getMessage());
         }
@@ -175,11 +154,62 @@ public class OrderDAO {
      * Pulisce il database degli ordini.
      */
     public void clearAll() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
+        try {
+            FileWriter writer = new FileWriter(FILE_PATH);
+            PrintWriter printWriter = new PrintWriter(writer);
             // Scrive file vuoto
+            printWriter.close();
+            writer.close();
         } catch (IOException e) {
             System.err.println("Errore nel pulire gli ordini: " + e.getMessage());
         }
+    }
+
+    /**
+     * Rimuove ordini duplicati dal database mantenendo solo il primo di ogni
+     * gruppo.
+     */
+    public void removeDuplicates() {
+        List<OrderSummary> allOrders = loadAllOrders();
+        List<String> seen = new ArrayList<String>();
+        List<OrderSummary> uniqueOrders = new ArrayList<OrderSummary>();
+
+        for (int i = 0; i < allOrders.size(); i++) {
+            OrderSummary order = allOrders.get(i);
+            // Chiave basata su prezzo e descrizione
+            String key = order.totalPrice + "|" + order.description;
+
+            // Controlla se abbiamo già visto questa chiave
+            boolean found = false;
+            for (int j = 0; j < seen.size(); j++) {
+                if (seen.get(j).equals(key)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                seen.add(key);
+                uniqueOrders.add(order);
+            }
+        }
+
+        // Riscrivi il file con solo gli ordini unici
+        try {
+            FileWriter fileWriter = new FileWriter(FILE_PATH);
+            PrintWriter writer = new PrintWriter(fileWriter);
+            for (int i = 0; i < uniqueOrders.size(); i++) {
+                OrderSummary order = uniqueOrders.get(i);
+                writer.println(order.timestamp + "|" + order.totalPrice + "|" +
+                        order.description + "|" + order.strategy + "|" + order.details);
+            }
+            writer.close();
+            fileWriter.close();
+        } catch (IOException e) {
+            System.err.println("Errore nel rimuovere i duplicati: " + e.getMessage());
+        }
+
+        System.out.println("Rimossi " + (allOrders.size() - uniqueOrders.size()) + " ordini duplicati.");
     }
 
     /**

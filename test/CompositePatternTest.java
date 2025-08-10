@@ -1,6 +1,4 @@
 // Test del pattern Composite - Order e Product
-// Posizionato nella cartella test per organizzazione
-package test;
 
 import model.*;
 import strategy.*;
