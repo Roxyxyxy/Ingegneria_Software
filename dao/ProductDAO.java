@@ -40,8 +40,12 @@ public class ProductDAO {
      * Aggiunge il prodotto alla fine del file esistente.
      */
     public void saveProduct(Product product) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH, true))) {
+        try {
+            FileWriter fileWriter = new FileWriter(FILE_PATH, true);
+            PrintWriter writer = new PrintWriter(fileWriter);
             writer.println(product.getDescription() + "," + product.getPrice());
+            writer.close();
+            fileWriter.close();
         } catch (IOException e) {
             System.err.println("Errore nel salvare il prodotto: " + e.getMessage());
         }
@@ -52,14 +56,16 @@ public class ProductDAO {
      * Restituisce una lista vuota se il file non esiste.
      */
     public List<Product> loadAllProducts() {
-        List<Product> products = new ArrayList<>();
+        List<Product> products = new ArrayList<Product>();
         File file = new File(FILE_PATH);
 
         if (!file.exists()) {
             return products;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+        try {
+            FileReader fileReader = new FileReader(FILE_PATH);
+            BufferedReader reader = new BufferedReader(fileReader);
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -73,6 +79,8 @@ public class ProductDAO {
                     }
                 }
             }
+            reader.close();
+            fileReader.close();
         } catch (IOException e) {
             System.err.println("Errore nel leggere il file: " + e.getMessage());
         }
@@ -84,7 +92,8 @@ public class ProductDAO {
      */
     public Product findByName(String name) {
         List<Product> products = loadAllProducts();
-        for (Product product : products) {
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
             if (product.getDescription().equals(name)) {
                 return product;
             }
@@ -96,8 +105,12 @@ public class ProductDAO {
      * Pulisce il database dei prodotti.
      */
     public void clearAll() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
+        try {
+            FileWriter fileWriter = new FileWriter(FILE_PATH);
+            PrintWriter writer = new PrintWriter(fileWriter);
             // Scrive file vuoto
+            writer.close();
+            fileWriter.close();
         } catch (IOException e) {
             System.err.println("Errore nel pulire i prodotti: " + e.getMessage());
         }

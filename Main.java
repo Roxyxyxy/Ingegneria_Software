@@ -1,19 +1,20 @@
 import model.*;
 import strategy.*;
 import dao.*;
+import java.util.List;
 
 /**
  * Demo dei design pattern con database.
  */
 public class Main {
     public static void main(String[] args) {
-        // Crea DAO per la persistenza
+        // DAO PATTERN: Crea oggetti per accesso ai dati
         ProductDAO productDAO = new ProductDAO();
         OrderDAO orderDAO = new OrderDAO();
 
         System.out.println("=== DEMO DESIGN PATTERNS CON DATABASE ===\n");
 
-        // Crea prodotti e salvali nel database
+        // CREATE: Crea prodotti e salvali nel database
         Product product1 = new Product("Product1", 20);
         Product product2 = new Product("Product2", 15);
 
@@ -21,30 +22,30 @@ public class Main {
         productDAO.saveProduct(product2);
         System.out.println("Prodotti salvati nel database.");
 
-        // Carica prodotti dal database
+        // READ: Carica prodotti dal database e mostrarli con ciclo tradizionale
         System.out.println("\nProdotti nel database:");
         for (Product p : productDAO.loadAllProducts()) {
             System.out.println("- " + p.getDescription() + ": $" + p.getPrice());
         }
 
-        // Prodotto decorato
+        // DECORATOR PATTERN: Applica decoratori al prodotto
         OrderComponent decoratedProduct2 = new InsuranceDecorator(
-                new GiftWrapDecorator(product2));
+                new GiftWrapDecorator(product2)); // Gift Wrap + Insurance
 
-        // Ordine con strategia di spedizione
+        // COMPOSITE + STRATEGY: Crea ordine con strategia di spedizione
         Order order = new Order(new FreeShippingOver50());
-        order.addItem(product1);
-        order.addItem(decoratedProduct2);
+        order.addItem(product1); // Prodotto normale
+        order.addItem(decoratedProduct2); // Prodotto decorato
 
         System.out.println("\n=== ORDINE CREATO ===");
         System.out.println("Total: " + order.getPrice());
         System.out.println("Description: " + order.getDescription());
 
-        // Salva l'ordine nel database
+        // PERSISTENCE: Salva l'ordine nel database
         orderDAO.saveOrder(order);
         System.out.println("\nOrdine salvato nel database.");
 
-        // Mostra cronologia ordini
+        // READ: Mostra cronologia ordini
         System.out.println("\n=== CRONOLOGIA ORDINI ===");
         for (OrderDAO.OrderSummary summary : orderDAO.loadAllOrders()) {
             System.out.println(summary);
