@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Aggiunge confezione regalo (+2.5€).
+ * Aggiunge confezione regalo (+$2.5).
  */
 public class GiftWrapDecorator extends ProductDecorator {
 

@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Aggiunge assicurazione (+4€).
+ * Aggiunge assicurazione (+$4).
  */
 public class InsuranceDecorator extends ProductDecorator {
 

@@ -1,7 +1,7 @@
 package strategy;
 
 /**
- * Spedizione standard: costo fisso 5€.
+ * Spedizione standard: costo fisso $5.
  */
 public class StandardShipping implements ShippingCostStrategy {
 

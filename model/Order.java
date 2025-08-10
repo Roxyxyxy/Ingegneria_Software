@@ -39,4 +39,11 @@ public class Order extends OrderComponent {
     public List<OrderComponent> getItems() {
         return items;
     }
+
+    /**
+     * Metodo pubblico per cambiare la strategia di spedizione.
+     */
+    public void setShippingStrategy(ShippingCostStrategy strategy) {
+        this.shippingStrategy = strategy;
+    }
 }

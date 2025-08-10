@@ -1,3 +1,5 @@
+package test;
+
 import model.*;
 import strategy.*;
 import dao.*;
@@ -28,7 +30,7 @@ public class TestDesignPatterns {
 
     /**
      * Test del pattern COMPOSITE
-     * Order può contenere più OrderComponent (prodotti o altri ordini)
+     * Order può contenere piu OrderComponent (prodotti o altri ordini)
      */
     private static void testCompositePattern() {
         System.out.println("--- TEST COMPOSITE PATTERN ---");
@@ -89,9 +91,9 @@ public class TestDesignPatterns {
         orderFree.addItem(item);
         System.out.println("Spedizione gratis >$50: $" + orderFree.getPrice() + " (sotto soglia, spedizione $5)");
 
-        // Aggiungo più prodotti per superare la soglia
+        // Aggiungo piu prodotti per superare la soglia
         orderFree.addItem(new Product("Altro libro", 40.0));
-        System.out.println("Con più prodotti: $" + orderFree.getPrice() + " (sopra $50, spedizione gratuita)");
+        System.out.println("Con piu prodotti: $" + orderFree.getPrice() + " (sopra $50, spedizione gratuita)");
         System.out.println();
     }
 
@@ -118,7 +120,7 @@ public class TestDesignPatterns {
         System.out.println("- " + laptopComplete.getDescription() + ": $" + laptopComplete.getPrice());
         System.out.println("- " + mouseWithInsurance.getDescription() + ": $" + mouseWithInsurance.getPrice());
         System.out.println("TOTALE: " + bigOrder.getDescription() + " - $" + bigOrder.getPrice());
-        System.out.println("(Spedizione gratuita perché ordine > $50)");
+        System.out.println("(Spedizione gratuita perche ordine > $50)");
 
         // Test salvataggio con DAO
         System.out.println("\n--- TEST DAO ---");
