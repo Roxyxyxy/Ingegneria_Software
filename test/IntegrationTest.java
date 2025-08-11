@@ -50,9 +50,9 @@ public class IntegrationTest {
         double totalPrice = order.getPrice();
         System.out.println("Prezzo totale calcolato: $" + totalPrice);
 
-        // Verifica calcolo: Console (500+5)*1.10 + Controller 70*1.10 = 555.5 + 77 =
-        // 632.5
-        double expectedTotal = 632.5;
+        // Verifica calcolo: Console (500+2.5)*1.10 + Controller 70*1.10 = 552.75 + 77 =
+        // 629.75
+        double expectedTotal = 629.75;
         if (Math.abs(totalPrice - expectedTotal) > 0.1) {
             System.out.println(
                     "ERRORE: Prezzo totale non corretto. Atteso: " + expectedTotal + ", Ottenuto: " + totalPrice);

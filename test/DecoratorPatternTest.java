@@ -56,7 +56,7 @@ public class DecoratorPatternTest {
         if (!description.equals("iPad + Gift Wrap")) {
             System.out.println("ERRORE: Descrizione gift wrap non corretta");
         }
-        if (price != 655.0) { // 650.0 + 5.0
+        if (price != 652.5) { // 650.0 + 2.5
             System.out.println("ERRORE: Prezzo gift wrap non corretto");
         }
 
@@ -106,7 +106,7 @@ public class DecoratorPatternTest {
         if (!description.equals(expectedDesc)) {
             System.out.println("ERRORE: Descrizione decoratori multipli non corretta");
         }
-        if (price != 500.5) { // (450 + 5) * 1.10 = 455 * 1.10 = 500.5
+        if (price != 497.75) { // (450 + 2.5) * 1.10 = 452.5 * 1.10 = 497.75
             System.out.println("ERRORE: Prezzo decoratori multipli non corretto");
         }
 

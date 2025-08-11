@@ -11,7 +11,7 @@ public class InsuranceDecorator extends ProductDecorator {
 
     @Override
     public double getPrice() {
-        return component.getPrice() * 1.10; // 10% di assicurazione
+        return Math.round(component.getPrice() * 1.10 * 100.0) / 100.0; // Arrotonda a 2 decimali
     }
 
     @Override
