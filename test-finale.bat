@@ -6,7 +6,7 @@ rem Pulisci file class esistenti
 del /Q *.class dao\*.class model\*.class strategy\*.class test\*.class 2>nul
 
 echo Compilazione classi principali...
-javac dao/*.java model/*.java strategy/*.java *.java
+javac -cp ".;sqlite-jdbc.jar" dao/*.java model/*.java strategy/*.java *.java
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORE: Compilazione classi principali fallita!
@@ -15,7 +15,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Compilazione test...
-javac -cp . test/*.java
+javac -cp ".;sqlite-jdbc.jar" test/*.java
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORE: Compilazione test fallita!
@@ -30,24 +30,24 @@ echo === Esecuzione Test ===
 echo.
 
 echo [1/4] Pattern Composite:
-java -cp . test.CompositePatternTest
+java -cp ".;sqlite-jdbc.jar" test.CompositePatternTest
 echo.
 
 echo [2/4] Pattern Decorator:
-java -cp . test.DecoratorPatternTest
+java -cp ".;sqlite-jdbc.jar" test.DecoratorPatternTest
 echo.
 
 echo [3/4] Pattern Strategy:
-java -cp . test.StrategyPatternTest
+java -cp ".;sqlite-jdbc.jar" test.StrategyPatternTest
 echo.
 
 echo [4/4] Test di Integrazione:
-java -cp . test.IntegrationTest
+java -cp ".;sqlite-jdbc.jar" test.IntegrationTest
 echo.
 
 echo === Tutti i test completati ===
 echo.
 echo Esecuzione programma principale:
-java Main
+java -cp ".;sqlite-jdbc.jar" Main
 echo.
 pause
