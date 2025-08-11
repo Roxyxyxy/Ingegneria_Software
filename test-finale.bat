@@ -29,20 +29,24 @@ echo.
 echo === Esecuzione Test ===
 echo.
 
-echo [1/4] Pattern Composite:
+echo [1/5] Pattern Composite:
 java -cp ".;sqlite-jdbc.jar;test" CompositePatternTest
 echo.
 
-echo [2/4] Pattern Decorator:
+echo [2/5] Pattern Decorator:
 java -cp ".;sqlite-jdbc.jar;test" DecoratorPatternTest
 echo.
 
-echo [3/4] Pattern Strategy:
+echo [3/5] Pattern Strategy:
 java -cp ".;sqlite-jdbc.jar;test" StrategyPatternTest
 echo.
 
-echo [4/4] Test di Integrazione:
+echo [4/5] Test di Integrazione:
 java -cp ".;sqlite-jdbc.jar;test" IntegrationTest
+echo.
+
+echo [5/5] Test Suite Completa (tutti i pattern):
+java -cp ".;sqlite-jdbc.jar;test" TestDesignPatterns
 echo.
 
 echo === Tutti i test completati ===
