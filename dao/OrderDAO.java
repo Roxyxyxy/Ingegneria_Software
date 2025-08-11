@@ -146,9 +146,46 @@ public class OrderDAO {
     }
 
     /**
-     * Carica tutti gli ordini dal file.
+     * Carica tutti gli ordini dal file o database.
      */
     public List<OrderSummary> loadAllOrders() {
+        if (useDatabase) {
+            return loadAllOrdersFromDatabase();
+        } else {
+            return loadAllOrdersFromFile();
+        }
+    }
+
+    /**
+     * Carica tutti gli ordini dal database.
+     */
+    private List<OrderSummary> loadAllOrdersFromDatabase() {
+        List<OrderSummary> orders = new ArrayList<OrderSummary>();
+        String sql = "SELECT timestamp, total_price, description, strategy, details FROM orders ORDER BY timestamp";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String timestamp = rs.getString("timestamp");
+                double totalPrice = rs.getDouble("total_price");
+                String description = rs.getString("description");
+                String strategy = rs.getString("strategy");
+                String details = rs.getString("details");
+
+                orders.add(new OrderSummary(timestamp, totalPrice, description, strategy, details));
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore nel caricare gli ordini dal database: " + e.getMessage());
+        }
+        return orders;
+    }
+
+    /**
+     * Carica tutti gli ordini dal file.
+     */
+    private List<OrderSummary> loadAllOrdersFromFile() {
         List<OrderSummary> orders = new ArrayList<OrderSummary>();
         File file = new File(FILE_PATH);
 
@@ -199,6 +236,30 @@ public class OrderDAO {
      * Pulisce il database degli ordini.
      */
     public void clearAll() {
+        if (useDatabase) {
+            clearOrdersFromDatabase();
+        } else {
+            clearOrdersFromFile();
+        }
+    }
+
+    /**
+     * Pulisce gli ordini dal database.
+     */
+    private void clearOrdersFromDatabase() {
+        String sql = "DELETE FROM orders";
+        try (Connection conn = DatabaseConfig.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Errore nel pulire gli ordini dal database: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Pulisce gli ordini dal file.
+     */
+    private void clearOrdersFromFile() {
         try {
             FileWriter writer = new FileWriter(FILE_PATH);
             PrintWriter printWriter = new PrintWriter(writer);

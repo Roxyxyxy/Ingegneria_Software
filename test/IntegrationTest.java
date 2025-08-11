@@ -35,20 +35,28 @@ public class IntegrationTest {
         // Crea ordine con strategia di spedizione gratuita sopra $50
         Order order = new Order(new FreeShippingOver50());
 
-        // DECORATOR PATTERN: Decora un laptop con gift wrap + insurance
-        Product laptop = new Product("Gaming Laptop", 1200.0);
-        OrderComponent decoratedLaptop = new InsuranceDecorator(
-                new GiftWrapDecorator(laptop)); // Doppio decoratore
-        order.addItem(decoratedLaptop);
+        // DECORATOR PATTERN: Decora una console con gift wrap + insurance
+        Product console = new Product("PlayStation 5", 500.0);
+        OrderComponent decoratedConsole = new InsuranceDecorator(
+                new GiftWrapDecorator(console)); // Doppio decoratore
+        order.addItem(decoratedConsole);
 
-        // DECORATOR PATTERN: Decora un mouse solo con insurance
-        Product mouse = new Product("Gaming Mouse", 80.0);
-        OrderComponent decoratedMouse = new InsuranceDecorator(mouse);
-        order.addItem(decoratedMouse);
+        // DECORATOR PATTERN: Decora un controller solo con insurance
+        Product controller = new Product("Controller Wireless", 70.0);
+        OrderComponent decoratedController = new InsuranceDecorator(controller);
+        order.addItem(decoratedController);
 
         // COMPOSITE PATTERN: Calcola totale ricorsivamente
         double totalPrice = order.getPrice();
         System.out.println("Prezzo totale calcolato: $" + totalPrice);
+
+        // Verifica calcolo: Console (500+5)*1.10 + Controller 70*1.10 = 555.5 + 77 =
+        // 632.5
+        double expectedTotal = 632.5;
+        if (Math.abs(totalPrice - expectedTotal) > 0.1) {
+            System.out.println(
+                    "ERRORE: Prezzo totale non corretto. Atteso: " + expectedTotal + ", Ottenuto: " + totalPrice);
+        }
 
         // DAO PATTERN: Persiste l'ordine nel database
         orderDAO.saveOrder(order);
@@ -69,19 +77,19 @@ public class IntegrationTest {
         ProductDAO productDAO = new ProductDAO();
         productDAO.clearAll(); // Pulisce per test isolato
 
-        // CREATE: Salva prodotti nel database
-        Product product1 = new Product("Test Product 1", 99.99);
-        Product product2 = new Product("Test Product 2", 149.99);
+        // CREATE: Salva prodotti gaming nel database
+        Product headset = new Product("Cuffie Gaming", 150.0);
+        Product gamepad = new Product("Gamepad Pro", 90.0);
 
-        productDAO.saveProduct(product1);
-        productDAO.saveProduct(product2);
+        productDAO.saveProduct(headset);
+        productDAO.saveProduct(gamepad);
 
         // READ: Ricarica e verifica - carica tutti i prodotti salvati
         List<Product> loadedProducts = productDAO.loadAllProducts();
         System.out.println("Prodotti caricati: " + loadedProducts.size());
 
         // SEARCH: Verifica ricerca per nome
-        Product found = productDAO.findByName("Test Product 1");
+        Product found = productDAO.findByName("Cuffie Gaming");
         if (found != null) {
             System.out.println("Prodotto trovato: " + found.getDescription() + " - $" + found.getPrice());
         }
@@ -96,18 +104,18 @@ public class IntegrationTest {
         Order orderStandard = new Order(new StandardShipping()); // Sempre $5
         Order orderFree = new Order(new FreeShippingOver50()); // Gratis se > $50
 
-        // DECORATOR PATTERN: Crea un prodotto con due decoratori
-        Product phone = new Product("Smartphone", 500.0);
-        OrderComponent decoratedPhone = new InsuranceDecorator(
-                new GiftWrapDecorator(phone)); // Gift wrap + Insurance
+        // DECORATOR PATTERN: Crea un prodotto gaming con due decoratori
+        Product console = new Product("Xbox Series X", 500.0);
+        OrderComponent decoratedConsole = new InsuranceDecorator(
+                new GiftWrapDecorator(console)); // Gift wrap + Insurance
 
         // COMPOSITE PATTERN: Aggiungi lo stesso prodotto a entrambi gli ordini
-        orderStandard.addItem(decoratedPhone);
-        orderFree.addItem(decoratedPhone);
+        orderStandard.addItem(decoratedConsole);
+        orderFree.addItem(decoratedConsole);
 
         // Calcola prezzi finali (mostra differenza tra strategie)
-        double priceStandard = orderStandard.getPrice(); // Phone decorato + spedizione standard
-        double priceFree = orderFree.getPrice(); // Phone decorato + spedizione gratuita (>$50)
+        double priceStandard = orderStandard.getPrice(); // Console decorata + spedizione standard
+        double priceFree = orderFree.getPrice(); // Console decorata + spedizione gratuita (>$50)
 
         System.out.println("Ordine con Standard Shipping: $" + priceStandard);
         System.out.println("Ordine con Free Shipping: $" + priceFree);

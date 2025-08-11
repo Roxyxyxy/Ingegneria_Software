@@ -33,7 +33,7 @@ public class StrategyPatternTest {
         System.out.println("Standard shipping per $100: " + cost2);
         System.out.println("Standard shipping per $0: " + cost3);
 
-        // Controlli 
+        // Controlli
         if (cost1 != 5.0) {
             System.out.println("ERRORE: Standard shipping non corretto per $10");
         }
@@ -108,8 +108,8 @@ public class StrategyPatternTest {
 
         // Test: cambio strategia su stesso ordine
         Order order = new Order(new StandardShipping());
-        Product item = new Product("Test Item", 75.0);
-        order.addItem(item);
+        Product tv = new Product("Smart TV 55\"", 700.0);
+        order.addItem(tv);
 
         double priceStandard = order.getPrice();
         System.out.println("Prezzo con Standard Shipping: " + priceStandard);
@@ -120,10 +120,10 @@ public class StrategyPatternTest {
         System.out.println("Prezzo con Free Shipping: " + priceFree);
 
         // Controlli semplici
-        if (priceStandard != 80.0) { // 75 + 5
+        if (priceStandard != 705.0) { // 700 + 5
             System.out.println("ERRORE: Prezzo con standard shipping non corretto");
         }
-        if (priceFree != 75.0) { // 75 + 0 (free shipping)
+        if (priceFree != 700.0) { // 700 + 0 (gratuita)
             System.out.println("ERRORE: Prezzo con free shipping non corretto");
         }
 

@@ -3,7 +3,8 @@ import strategy.*;
 import dao.*;
 
 /**
- * Demo dei design pattern con database.
+ * Demo completa dei design pattern con database.
+ * Mostra tutti e 3 i pattern con multiple entità.
  */
 public class Main {
     public static void main(String[] args) {
@@ -11,45 +12,92 @@ public class Main {
         ProductDAO productDAO = new ProductDAO();
         OrderDAO orderDAO = new OrderDAO();
 
-        System.out.println("=== DEMO DESIGN PATTERNS CON DATABASE ===\n");
+        System.out.println("=== DEMO COMPLETA DESIGN PATTERNS CON DATABASE ===\n");
 
-        // CREATE: Crea prodotti e salvali nel database
-        Product product1 = new Product("Product1", 20);
-        Product product2 = new Product("Product2", 15);
+        // PULIZIA: Inizia con database pulito per demo chiara
+        productDAO.clearAll();
+        orderDAO.clearAll();
+        System.out.println("Database pulito per demo fresca.\n");
 
-        productDAO.saveProduct(product1);
-        productDAO.saveProduct(product2);
-        System.out.println("Prodotti salvati nel database.");
+        // CREATE: Crea una gamma di componenti PC
+        Product gpu = new Product("Scheda Grafica RTX", 1200.0);
+        Product cpu = new Product("Processore i7", 400.0);
+        Product ssd = new Product("SSD 1TB", 150.0);
+        Product ram = new Product("RAM 32GB", 300.0);
+        Product motherboard = new Product("Scheda Madre", 180.0);
 
-        // READ: Carica prodotti dal database e mostrarli con ciclo tradizionale
-        System.out.println("\nProdotti nel database:");
+        System.out.println("=== SALVANDO PRODOTTI NEL DATABASE ===");
+        productDAO.saveProduct(gpu);
+        productDAO.saveProduct(cpu);
+        productDAO.saveProduct(ssd);
+        productDAO.saveProduct(ram);
+        productDAO.saveProduct(motherboard);
+
+        // READ: Mostra tutti i prodotti nel database
+        System.out.println("\nProdotti disponibili nel database:");
         for (Product p : productDAO.loadAllProducts()) {
             System.out.println("- " + p.getDescription() + ": $" + p.getPrice());
         }
 
-        // DECORATOR PATTERN: Applica decoratori al prodotto
-        OrderComponent decoratedProduct2 = new InsuranceDecorator(
-                new GiftWrapDecorator(product2)); // Gift Wrap + Insurance
+        System.out.println("\n=== CREANDO ORDINI CON DIVERSI PATTERN ===");
 
-        // COMPOSITE + STRATEGY: Crea ordine con strategia di spedizione
-        Order order = new Order(new FreeShippingOver50());
-        order.addItem(product1); // Prodotto normale
-        order.addItem(decoratedProduct2); // Prodotto decorato
+        // ORDINE 1: Build PC base con spedizione standard
+        System.out.println("\n--- ORDINE 1: Build PC Base ---");
+        Order order1 = new Order(new StandardShipping());
+        order1.addItem(gpu);
+        order1.addItem(cpu);
 
-        System.out.println("\n=== ORDINE CREATO ===");
-        System.out.println("Total: " + order.getPrice());
-        System.out.println("Description: " + order.getDescription());
+        System.out.println("Ordine 1 - " + order1.getDescription());
+        System.out.println("Totale: $" + order1.getPrice() + " (include spedizione standard di $5)");
 
-        // PERSISTENCE: Salva l'ordine nel database
-        orderDAO.saveOrder(order);
-        System.out.println("\nOrdine salvato nel database.");
+        // ORDINE 2: Setup completo con decoratori e spedizione gratuita
+        System.out.println("\n--- ORDINE 2: Setup Completo Decorato ---");
+        Order order2 = new Order(new FreeShippingOver50());
 
-        // READ: Mostra cronologia ordini
-        System.out.println("\n=== CRONOLOGIA ORDINI ===");
+        // DECORATOR PATTERN: Applica decoratori multipli
+        OrderComponent decoratedRAM = new InsuranceDecorator(
+                new GiftWrapDecorator(ram)); // RAM con confezione regalo + assicurazione
+        OrderComponent decoratedMotherboard = new GiftWrapDecorator(motherboard); // Solo confezione regalo
+
+        order2.addItem(ssd);
+        order2.addItem(decoratedRAM);
+        order2.addItem(decoratedMotherboard);
+
+        System.out.println("Ordine 2 - " + order2.getDescription());
+        System.out.println("Totale: $" + order2.getPrice() + " (spedizione gratuita > $50)");
+
+        // ORDINE 3: Acquisto singolo che paga spedizione
+        System.out.println("\n--- ORDINE 3: Componente Singolo ---");
+        Order order3 = new Order(new FreeShippingOver50());
+        OrderComponent decoratedCPU = new InsuranceDecorator(cpu); // CPU con assicurazione
+        order3.addItem(decoratedCPU);
+
+        System.out.println("Ordine 3 - " + order3.getDescription());
+        System.out.println("Totale: $" + order3.getPrice() + " (sotto $50, spedizione $5)");
+
+        // PERSISTENCE: Salva tutti gli ordini nel database
+        System.out.println("\n=== SALVANDO ORDINI NEL DATABASE ===");
+        orderDAO.saveOrder(order1);
+        orderDAO.saveOrder(order2);
+        orderDAO.saveOrder(order3);
+        System.out.println("Tutti gli ordini salvati nel database.");
+
+        // READ: Mostra cronologia completa ordini
+        System.out.println("\n=== CRONOLOGIA COMPLETA ORDINI ===");
         for (OrderDAO.OrderSummary summary : orderDAO.loadAllOrders()) {
             System.out.println(summary);
         }
 
+        // STATISTICHE: Mostra statistiche database
+        System.out.println("\n=== STATISTICHE DATABASE ===");
+        System.out.println("Prodotti totali: " + productDAO.loadAllProducts().size());
+        System.out.println("Ordini totali: " + orderDAO.loadAllOrders().size());
+
         System.out.println("\n=== DEMO COMPLETATA ===");
+        System.out.println("Tutti e 3 i design pattern dimostrati con successo!");
+        System.out.println("- COMPOSITE: Ordini contengono componenti");
+        System.out.println("- DECORATOR: Prodotti decorati con servizi extra");
+        System.out.println("- STRATEGY: Diverse strategie di spedizione");
+        System.out.println("- DAO: Persistenza su database SQLite");
     }
 }

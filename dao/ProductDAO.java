@@ -219,7 +219,7 @@ public class ProductDAO {
                 Statement stmt = conn.createStatement()) {
 
             stmt.executeUpdate(sql);
-            System.out.println("Tutti i prodotti sono stati eliminati dal database.");
+            // System.out.println("Tutti i prodotti sono stati eliminati dal database.");
 
         } catch (SQLException e) {
             System.err.println("Errore nell'eliminare i prodotti: " + e.getMessage());

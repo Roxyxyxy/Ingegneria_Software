@@ -50,8 +50,6 @@ public class DatabaseConfig {
                     """;
             stmt.execute(createOrdersTable);
 
-            System.out.println("Database inizializzato correttamente.");
-
         } catch (SQLException e) {
             System.err.println("Errore inizializzazione database: " + e.getMessage());
         }

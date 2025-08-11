@@ -1,4 +1,4 @@
-// Test del pattern Decorator - GiftWrap e Insurance
+// Test del pattern Decorator
 
 import model.*;
 
@@ -21,7 +21,7 @@ public class DecoratorPatternTest {
     public void testBasicProduct() {
         System.out.println("\nTest: Prodotto base");
 
-        Product phone = new Product("Smartphone", 500.0);
+        Product phone = new Product("iPhone Pro", 1100.0);
 
         String description = phone.getDescription();
         double price = phone.getPrice();
@@ -30,10 +30,10 @@ public class DecoratorPatternTest {
         System.out.println("Prodotto base - Prezzo: " + price);
 
         // Controlli semplici
-        if (!description.equals("Smartphone")) {
+        if (!description.equals("iPhone Pro")) {
             System.out.println("ERRORE: Descrizione base non corretta");
         }
-        if (price != 500.0) {
+        if (price != 1100.0) {
             System.out.println("ERRORE: Prezzo base non corretto");
         }
 
@@ -43,20 +43,20 @@ public class DecoratorPatternTest {
     public void testGiftWrapDecorator() {
         System.out.println("\nTest: Gift Wrap Decorator");
 
-        Product book = new Product("Libro Java", 25.0);
-        OrderComponent wrappedBook = new GiftWrapDecorator(book);
+        Product tablet = new Product("iPad", 650.0);
+        OrderComponent wrappedTablet = new GiftWrapDecorator(tablet);
 
-        String description = wrappedBook.getDescription();
-        double price = wrappedBook.getPrice();
+        String description = wrappedTablet.getDescription();
+        double price = wrappedTablet.getPrice();
 
-        System.out.println("Libro con confezione - Descrizione: " + description);
-        System.out.println("Libro con confezione - Prezzo: " + price);
+        System.out.println("Tablet con confezione - Descrizione: " + description);
+        System.out.println("Tablet con confezione - Prezzo: " + price);
 
         // Controlli semplici
-        if (!description.equals("Libro Java + Gift Wrap")) {
+        if (!description.equals("iPad + Gift Wrap")) {
             System.out.println("ERRORE: Descrizione gift wrap non corretta");
         }
-        if (price != 27.5) { // 25.0 + 2.5
+        if (price != 655.0) { // 650.0 + 5.0
             System.out.println("ERRORE: Prezzo gift wrap non corretto");
         }
 
@@ -66,20 +66,20 @@ public class DecoratorPatternTest {
     public void testInsuranceDecorator() {
         System.out.println("\nTest: Insurance Decorator");
 
-        Product laptop = new Product("Gaming Laptop", 1200.0);
-        OrderComponent insuredLaptop = new InsuranceDecorator(laptop);
+        Product airpods = new Product("AirPods", 180.0);
+        OrderComponent insuredAirpods = new InsuranceDecorator(airpods);
 
-        String description = insuredLaptop.getDescription();
-        double price = insuredLaptop.getPrice();
+        String description = insuredAirpods.getDescription();
+        double price = insuredAirpods.getPrice();
 
-        System.out.println("Laptop assicurato - Descrizione: " + description);
-        System.out.println("Laptop assicurato - Prezzo: " + price);
+        System.out.println("AirPods assicurati - Descrizione: " + description);
+        System.out.println("AirPods assicurati - Prezzo: " + price);
 
         // Controlli semplici
-        if (!description.equals("Gaming Laptop + Insurance")) {
+        if (!description.equals("AirPods + Insurance")) {
             System.out.println("ERRORE: Descrizione insurance non corretta");
         }
-        if (price != 1204.0) { // 1200.0 + 4.0
+        if (price != 198.0) { // 180.0 * 1.10 (10%)
             System.out.println("ERRORE: Prezzo insurance non corretto");
         }
 
@@ -89,7 +89,7 @@ public class DecoratorPatternTest {
     public void testMultipleDecorators() {
         System.out.println("\nTest: Decoratori multipli");
 
-        Product watch = new Product("Smartwatch", 300.0);
+        Product watch = new Product("Apple Watch", 450.0);
 
         // Applica entrambi i decoratori
         OrderComponent wrappedWatch = new GiftWrapDecorator(watch);
@@ -101,12 +101,12 @@ public class DecoratorPatternTest {
         System.out.println("Watch decorato - Descrizione: " + description);
         System.out.println("Watch decorato - Prezzo: " + price);
 
-        // Controlli 
-        String expectedDesc = "Smartwatch + Gift Wrap + Insurance";
+        // Controlli
+        String expectedDesc = "Apple Watch + Gift Wrap + Insurance";
         if (!description.equals(expectedDesc)) {
             System.out.println("ERRORE: Descrizione decoratori multipli non corretta");
         }
-        if (price != 306.5) { // 300 + 2.5 + 4.0
+        if (price != 500.5) { // (450 + 5) * 1.10 = 455 * 1.10 = 500.5
             System.out.println("ERRORE: Prezzo decoratori multipli non corretto");
         }
 

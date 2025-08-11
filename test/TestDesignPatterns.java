@@ -33,9 +33,9 @@ public class TestDesignPatterns {
     private static void testCompositePattern() {
         System.out.println("--- TEST COMPOSITE PATTERN ---");
 
-        // Creo prodotti base
-        Product laptop = new Product("Laptop", 800.0);
-        Product mouse = new Product("Mouse", 25.0);
+        // Creo prodotti gaming
+        Product laptop = new Product("Gaming Laptop", 1200.0);
+        Product mouse = new Product("Gaming Mouse", 80.0);
 
         // Creo un ordine con strategia standard
         Order order = new Order(new StandardShipping());
@@ -54,19 +54,20 @@ public class TestDesignPatterns {
     private static void testDecoratorPattern() {
         System.out.println("--- TEST DECORATOR PATTERN ---");
 
-        // Prodotto base
-        Product phone = new Product("Smartphone", 500.0);
-        System.out.println("Prodotto base: " + phone.getDescription() + " - $" + phone.getPrice());
+        // Prodotto gaming base
+        Product console = new Product("Gaming Console", 500.0);
+        System.out.println("Prodotto base: " + console.getDescription() + " - $" + console.getPrice());
 
         // Aggiungo gift wrap
-        OrderComponent phoneWithGiftWrap = new GiftWrapDecorator(phone);
+        OrderComponent consoleWithGiftWrap = new GiftWrapDecorator(console);
         System.out.println(
-                "Con confezione regalo: " + phoneWithGiftWrap.getDescription() + " - $" + phoneWithGiftWrap.getPrice());
+                "Con confezione regalo: " + consoleWithGiftWrap.getDescription() + " - $"
+                        + consoleWithGiftWrap.getPrice());
 
         // Aggiungo anche assicurazione
-        OrderComponent phoneComplete = new InsuranceDecorator(phoneWithGiftWrap);
-        System.out.println("Con confezione + assicurazione: " + phoneComplete.getDescription() + " - $"
-                + phoneComplete.getPrice());
+        OrderComponent consoleComplete = new InsuranceDecorator(consoleWithGiftWrap);
+        System.out.println("Con confezione + assicurazione: " + consoleComplete.getDescription() + " - $"
+                + consoleComplete.getPrice());
         System.out.println();
     }
 
@@ -77,21 +78,21 @@ public class TestDesignPatterns {
     private static void testStrategyPattern() {
         System.out.println("--- TEST STRATEGY PATTERN ---");
 
-        Product item = new Product("Libro", 15.0);
+        Product headset = new Product("Gaming Headset", 120.0);
 
         // Strategia 1: Spedizione standard (sempre $5)
         Order orderStandard = new Order(new StandardShipping());
-        orderStandard.addItem(item);
-        System.out.println("Spedizione standard: $" + orderStandard.getPrice() + " (prodotto $15 + spedizione $5)");
+        orderStandard.addItem(headset);
+        System.out.println("Spedizione standard: $" + orderStandard.getPrice() + " (prodotto $120 + spedizione $5)");
 
         // Strategia 2: Spedizione gratuita sopra $50
         Order orderFree = new Order(new FreeShippingOver50());
-        orderFree.addItem(item);
-        System.out.println("Spedizione gratis >$50: $" + orderFree.getPrice() + " (sotto soglia, spedizione $5)");
+        orderFree.addItem(headset);
+        System.out.println("Spedizione gratis >$50: $" + orderFree.getPrice() + " (sopra soglia, spedizione gratuita)");
 
-        // Aggiungo piu prodotti per superare la soglia
-        orderFree.addItem(new Product("Altro libro", 40.0));
-        System.out.println("Con piu prodotti: $" + orderFree.getPrice() + " (sopra $50, spedizione gratuita)");
+        // Aggiungo più prodotti per mostrare la differenza
+        orderFree.addItem(new Product("Gaming Controller", 60.0));
+        System.out.println("Con più prodotti: $" + orderFree.getPrice() + " (sopra $50, spedizione gratuita)");
         System.out.println();
     }
 

@@ -22,18 +22,18 @@ public class CompositePatternTest {
     public void testProductAsLeaf() {
         System.out.println("\nTest: Product come leaf");
 
-        Product laptop = new Product("Gaming Laptop", 1200.0);
+        Product desktop = new Product("Desktop PC", 800.0);
 
-        String description = laptop.getDescription();
-        double price = laptop.getPrice();
+        String description = desktop.getDescription();
+        double price = desktop.getPrice();
 
         System.out.println("Descrizione: " + description);
         System.out.println("Prezzo: " + price);
 
-        if (!description.equals("Gaming Laptop")) {
+        if (!description.equals("Desktop PC")) {
             System.out.println("ERRORE: Descrizione non corretta");
         }
-        if (price != 1200.0) {
+        if (price != 800.0) {
             System.out.println("ERRORE: Prezzo non corretto");
         }
 
@@ -44,10 +44,10 @@ public class CompositePatternTest {
         System.out.println("\nTest: Order come composite");
 
         Order order = new Order(new StandardShipping());
-        Product laptop = new Product("Gaming Laptop", 1200.0);
-        Product mouse = new Product("Gaming Mouse", 80.0);
+        Product keyboard = new Product("Tastiera Meccanica", 120.0);
+        Product mouse = new Product("Mouse Gaming", 75.0);
 
-        order.addItem(laptop);
+        order.addItem(keyboard);
         order.addItem(mouse);
 
         String description = order.getDescription();
@@ -59,7 +59,7 @@ public class CompositePatternTest {
         if (!description.equals("Order with 2 items")) {
             System.out.println("ERRORE: Descrizione ordine non corretta");
         }
-        if (totalPrice != 1285.0) {
+        if (totalPrice != 200.0) {
             System.out.println("ERRORE: Prezzo totale non corretto");
         }
 
@@ -96,9 +96,9 @@ public class CompositePatternTest {
 
         Order bigOrder = new Order(new FreeShippingOver50());
 
-        bigOrder.addItem(new Product("Libro", 15.0));
-        bigOrder.addItem(new Product("Penna", 2.5));
-        bigOrder.addItem(new Product("Zaino", 45.0));
+        bigOrder.addItem(new Product("Monitor", 250.0));
+        bigOrder.addItem(new Product("Webcam", 85.0));
+        bigOrder.addItem(new Product("Speakers", 120.0));
         bigOrder.addItem(new Product("Laptop", 800.0));
 
         double totalPrice = bigOrder.getPrice();
@@ -110,7 +110,7 @@ public class CompositePatternTest {
         if (itemCount != 4) {
             System.out.println("ERRORE: Conteggio elementi non corretto");
         }
-        if (totalPrice != 862.5) {
+        if (totalPrice != 1255.0) {
             System.out.println("ERRORE: Calcolo prezzo non corretto");
         }
 
