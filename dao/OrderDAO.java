@@ -4,6 +4,8 @@ import model.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * DAO per gestire gli ordini su file o database.
@@ -17,6 +19,14 @@ public class OrderDAO {
         if (useDatabase) {
             DatabaseConfig.initDatabase();
         }
+    }
+
+    /**
+     * Genera un timestamp in formato leggibile
+     */
+    private String generateTimestamp() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(new Date());
     }
 
     private void createDataDirectory() {
@@ -51,7 +61,7 @@ public class OrderDAO {
         try (Connection conn = DatabaseConfig.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            String timestamp = "2025-08-10 " + System.currentTimeMillis() % 86400000 / 1000;
+            String timestamp = generateTimestamp();
             String strategy = order.getClass().getSimpleName();
 
             pstmt.setString(1, timestamp);
@@ -81,7 +91,7 @@ public class OrderDAO {
             PrintWriter printWriter = new PrintWriter(writer);
 
             // Usa timestamp semplice
-            String timestamp = "2025-08-10 " + System.currentTimeMillis() % 86400000 / 1000;
+            String timestamp = generateTimestamp();
             String strategy = order.getClass().getSimpleName();
 
             // Crea la riga da salvare
