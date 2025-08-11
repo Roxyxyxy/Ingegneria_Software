@@ -1,7 +1,6 @@
 import model.*;
 import strategy.*;
 import dao.*;
-import java.util.List;
 
 /**
  * Demo dei design pattern con database.

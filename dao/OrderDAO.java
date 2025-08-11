@@ -2,13 +2,15 @@ package dao;
 
 import model.*;
 import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 /**
- * DAO per gestire gli ordini su file.
+ * DAO per gestire gli ordini su file o database.
  */
 public class OrderDAO {
     private static final String FILE_PATH = "data/orders.txt";
+    private boolean useDatabase = true; // Imposta a false per usare file
 
     public OrderDAO() {
         createDataDirectory();
@@ -22,9 +24,49 @@ public class OrderDAO {
     }
 
     /**
-     * Salva un ordine nel database.
+     * Salva un ordine su file o database.
      */
     public void saveOrder(Order order) {
+        if (useDatabase) {
+            saveOrderToDatabase(order);
+        } else {
+            saveOrderToFile(order);
+        }
+    }
+
+    /**
+     * Salva ordine nel database SQLite
+     */
+    private void saveOrderToDatabase(Order order) {
+        // Controlla se l'ordine è duplicato nel database
+        if (isDuplicateOrderInDatabase(order)) {
+            System.out.println("Ordine già esistente nel database, non salvato.");
+            return;
+        }
+
+        String sql = "INSERT INTO orders (timestamp, total_price, description, strategy, details) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConfig.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String timestamp = "2025-08-10 " + System.currentTimeMillis() % 86400000 / 1000;
+            String strategy = order.getClass().getSimpleName();
+
+            pstmt.setString(1, timestamp);
+            pstmt.setDouble(2, order.getPrice()); // Usa getPrice() invece di getTotalPrice()
+            pstmt.setString(3, order.getDescription());
+            pstmt.setString(4, strategy);
+            pstmt.setString(5, order.getDescription()); // Dettagli come descrizione
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Errore nel salvare l'ordine nel database: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Salva ordine su file (metodo originale)
+     */
+    private void saveOrderToFile(Order order) {
         // Controlla se l'ordine è duplicato
         if (isDuplicateOrder(order)) {
             System.out.println("Ordine già esistente, non salvato.");
@@ -101,7 +143,7 @@ public class OrderDAO {
     }
 
     /**
-     * Carica tutti gli ordini dal database.
+     * Carica tutti gli ordini dal file.
      */
     public List<OrderSummary> loadAllOrders() {
         List<OrderSummary> orders = new ArrayList<OrderSummary>();
@@ -236,5 +278,28 @@ public class OrderDAO {
             return String.format("[%s] %s - $%.2f (%s)",
                     timestamp, description, totalPrice, strategy);
         }
+    }
+
+    /**
+     * Controlla se un ordine è duplicato nel database
+     */
+    private boolean isDuplicateOrderInDatabase(Order order) {
+        String sql = "SELECT COUNT(*) FROM orders WHERE description = ? AND total_price = ?";
+        try (Connection conn = DatabaseConfig.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, order.getDescription());
+            pstmt.setDouble(2, order.getPrice()); // Usa getPrice() invece di getTotalPrice()
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Errore nel controllo duplicati database: " + e.getMessage());
+        }
+
+        return false;
     }
 }
