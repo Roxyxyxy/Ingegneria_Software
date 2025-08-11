@@ -14,6 +14,9 @@ public class OrderDAO {
 
     public OrderDAO() {
         createDataDirectory();
+        if (useDatabase) {
+            DatabaseConfig.initDatabase();
+        }
     }
 
     private void createDataDirectory() {

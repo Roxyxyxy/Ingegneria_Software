@@ -25,6 +25,9 @@ public class ProductDAO {
      */
     public ProductDAO() {
         createDataDirectory();
+        if (useDatabase) {
+            DatabaseConfig.initDatabase();
+        }
     }
 
     /**
