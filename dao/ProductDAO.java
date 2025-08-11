@@ -56,6 +56,12 @@ public class ProductDAO {
      * Salva prodotto nel database SQLite
      */
     private void saveProductToDatabase(Product product) {
+        // Controlla se il prodotto esiste già
+        if (isDuplicateProduct(product)) {
+            System.out.println("Prodotto già esistente nel database, non salvato: " + product.getDescription());
+            return;
+        }
+
         String sql = "INSERT INTO products (name, price) VALUES (?, ?)";
         try (Connection conn = DatabaseConfig.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -67,6 +73,29 @@ public class ProductDAO {
         } catch (SQLException e) {
             System.err.println("Errore nel salvare il prodotto nel database: " + e.getMessage());
         }
+    }
+
+    /**
+     * Controlla se un prodotto è duplicato nel database
+     */
+    private boolean isDuplicateProduct(Product product) {
+        String sql = "SELECT COUNT(*) FROM products WHERE name = ? AND price = ?";
+        try (Connection conn = DatabaseConfig.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, product.getDescription());
+            pstmt.setDouble(2, product.getPrice());
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Errore nel controllo duplicati prodotto: " + e.getMessage());
+        }
+
+        return false;
     }
 
     /**
@@ -170,9 +199,37 @@ public class ProductDAO {
     }
 
     /**
-     * Pulisce il database dei prodotti.
+     * Pulisce tutti i prodotti dal database o file.
      */
     public void clearAll() {
+        if (useDatabase) {
+            clearProductsFromDatabase();
+        } else {
+            clearProductsFromFile();
+        }
+    }
+
+    /**
+     * Pulisce tutti i prodotti dal database.
+     */
+    private void clearProductsFromDatabase() {
+        String sql = "DELETE FROM products";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+                Statement stmt = conn.createStatement()) {
+
+            stmt.executeUpdate(sql);
+            System.out.println("Tutti i prodotti sono stati eliminati dal database.");
+
+        } catch (SQLException e) {
+            System.err.println("Errore nell'eliminare i prodotti: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Pulisce il file dei prodotti.
+     */
+    private void clearProductsFromFile() {
         try {
             FileWriter fileWriter = new FileWriter(FILE_PATH);
             PrintWriter writer = new PrintWriter(fileWriter);

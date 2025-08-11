@@ -43,7 +43,7 @@ public class OrderDAO {
     private void saveOrderToDatabase(Order order) {
         // Controlla se l'ordine è duplicato nel database
         if (isDuplicateOrderInDatabase(order)) {
-            System.out.println("Ordine già esistente nel database, non salvato.");
+            System.out.println("Ordine gia esistente nel database, non salvato.");
             return;
         }
 
@@ -72,7 +72,7 @@ public class OrderDAO {
     private void saveOrderToFile(Order order) {
         // Controlla se l'ordine è duplicato
         if (isDuplicateOrder(order)) {
-            System.out.println("Ordine già esistente, non salvato.");
+            System.out.println("Ordine gia esistente, non salvato.");
             return;
         }
 

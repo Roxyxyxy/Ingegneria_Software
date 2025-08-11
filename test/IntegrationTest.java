@@ -27,8 +27,10 @@ public class IntegrationTest {
         System.out.println("\nTest: Flusso completo ordine");
 
         // Setup DAO per la persistenza
+        ProductDAO productDAO = new ProductDAO();
         OrderDAO orderDAO = new OrderDAO();
-        orderDAO.clearAll(); // Pulisce dati precedenti per test pulito
+        productDAO.clearAll(); // Pulisce prodotti precedenti
+        orderDAO.clearAll(); // Pulisce ordini precedenti
 
         // Crea ordine con strategia di spedizione gratuita sopra $50
         Order order = new Order(new FreeShippingOver50());
@@ -48,7 +50,7 @@ public class IntegrationTest {
         double totalPrice = order.getPrice();
         System.out.println("Prezzo totale calcolato: $" + totalPrice);
 
-        // DAO PATTERN: Persiste l'ordine su file
+        // DAO PATTERN: Persiste l'ordine nel database
         orderDAO.saveOrder(order);
 
         // Verifica salvataggio - carica tutti gli ordini salvati
@@ -104,8 +106,8 @@ public class IntegrationTest {
         orderFree.addItem(decoratedPhone);
 
         // Calcola prezzi finali (mostra differenza tra strategie)
-        double priceStandard = orderStandard.getPrice(); // 500 + 2.5 + 4 + 5 = 511.5
-        double priceFree = orderFree.getPrice(); // 500 + 2.5 + 4 + 0 = 506.5
+        double priceStandard = orderStandard.getPrice(); // Phone decorato + spedizione standard
+        double priceFree = orderFree.getPrice(); // Phone decorato + spedizione gratuita (>$50)
 
         System.out.println("Ordine con Standard Shipping: $" + priceStandard);
         System.out.println("Ordine con Free Shipping: $" + priceFree);
