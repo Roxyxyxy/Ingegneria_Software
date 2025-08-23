@@ -17,7 +17,7 @@ import java.util.*;
 public class ProductDAO {
     // Il percorso del file dove salvare i prodotti
     private static final String FILE_PATH = "data/products.txt";
-    private boolean useDatabase = true; // Imposta a false per usare file
+    private boolean useDatabase = false; // Imposta a false per usare file
 
     /**
      * Costruttore: quando creiamo un ProductDAO,

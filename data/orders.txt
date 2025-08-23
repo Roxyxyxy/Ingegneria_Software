@@ -1,0 +1,6 @@
+2025-08-23 16:46:34|1605.0|Order with 2 items|Order|Scheda Grafica RTX,1200.0,false,false;Processore i7,400.0,false,false
+2025-08-23 16:46:34|665.25|Order with 3 items|Order|SSD 1TB,150.0,false,false;RAM 32GB + Gift Wrap + Insurance,332.75,true,true;Scheda Madre + Gift Wrap,182.5,true,false
+2025-08-23 16:46:34|440.0|Order with 1 items|Order|Processore i7 + Insurance,440.0,false,true
+2025-08-23 16:46:43|1410.75|Order with 2 items|Order|Gaming Laptop + Gift Wrap + Insurance,1322.75,true,true;Gaming Mouse + Insurance,88.0,false,true
+
+ESEGUIBILI SE all'interno di OrderDAO private boolean useDatabase = false;

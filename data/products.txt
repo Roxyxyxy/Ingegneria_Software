@@ -1,0 +1,6 @@
+Scheda Grafica RTX,1200.0
+Processore i7,400.0
+SSD 1TB,150.0
+RAM 32GB,300.0
+Scheda Madre,180.0
+ESEGUIBILI SE all'interno di ProductDAO private boolean useDatabase = false; 
