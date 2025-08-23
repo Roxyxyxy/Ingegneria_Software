@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class OrderDAO {
     private static final String FILE_PATH = "data/orders.txt";
-    private boolean useDatabase = false; // Imposta a false per usare file
+    private boolean useDatabase = true; // Imposta a false per usare file
 
     public OrderDAO() {
         createDataDirectory();
